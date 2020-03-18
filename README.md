@@ -21,3 +21,41 @@ params=[[1,2], [3,4]] , indices = [1, 0], axis=0  =>  [[3,4], [1,2]]
 在第1个轴上先取第1个元素 再取第0个元素
 params=[[1,2], [3,4]] , indices = [1, 0], axis=1  =>  [[2,1], [4,3]]
 
+
+### tf.linalg.matmul / 又名 tf.matmul
+```python
+tf.linalg.matmul(
+    a, b, transpose_a=False, transpose_b=False, adjoint_a=False, adjoint_b=False,
+    a_is_sparse=False, b_is_sparse=False, name=None
+)
+```
+就是普通的二维矩阵乘法
+Args:
+
+- a: tf.Tensor,  rank > 1.  
+- b: tf.Tensor with same type and rank as a.
+- transpose_a: If True, a 先转置.
+- transpose_b: If True, b 先转置.
+- adjoint_a: If True, a 先共轭和转置.
+- adjoint_b: If True, b 先共轭和转置.
+- a_is_sparse: If True, a 是一个 sparse matrix.
+- b_is_sparse: If True, b 是一个 sparse matrix.
+- name: Name for the operation (optional).
+
+举几个例子:
+
+tf.linalg.matmul([[1]], [[2,3]]) => [[2, 3]] , shape from (1,1)*(1,2) to (1,2)
+
+tf.linalg.matmul([[[1],[2]]], [[2,3]])  =>  [[[2, 3], [4, 6]]]  shape from (1,2,1)*(1,2) to (1,2,2)
+
+tf.linalg.matmul([[1,2]], [[1,2],[1,2]]) => [[3, 6]] shape from (1,2) *(2, 2) to (1, 2)
+
+tf.linalg.matmul([[1,2]], [[[1,2],[2,2]],[[1,2],[2,2]]])  shape from (1,2)*(2,2,2) to (2, 1, 2)
+
+但是这样是不行的:
+
+tf.linalg.matmul([[[1],[2]]], [[[2],[3]]])  , (1,2,1)*(1,2,1)
+
+从这个例子,我们很容易发现, 这个就是普通的矩阵乘法, 如果张量的rank大于2的化,就取最后的两个轴拿来计算,再拼接到原来的轴上
+
+
